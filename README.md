@@ -2,7 +2,7 @@
 Let's write a Calculator to calculate the cost of layout.
 
 The course is suitable for those who are just learning JS:
-Let's write a Calculator to calculate the cost of layout
+
 * Learn the basics of JavaScript and ES6.
 * Learn how to work with DOM tree elements, get elements from the page, manipulate them (hide, display, create new ones)
 * Learn how to work with selectors, especially classes: add, delete, and check for classes,
