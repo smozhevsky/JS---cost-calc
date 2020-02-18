@@ -1,5 +1,6 @@
 # JS-calculator for site
-Let's write a Calculator to calculate the cost of layout
+Let's write a Calculator to calculate the cost of layout.
+
 The course is suitable for those who are just learning JS:
 Let's write a Calculator to calculate the cost of layout
 * Learn the basics of JavaScript and ES6.
