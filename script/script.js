@@ -10,7 +10,7 @@ const DATA = {
   metrikaYandex: [500, 1000, 2000],
   analyticsGoogle: [850, 1350, 3000],
   sendOrder: 500,
-  deadlineDay: [[2, 7], [3, 10], [7, 14]],
+  deadlineDay: [[2, 7], [3, 10], [7, 21]],
   deadlinePercent: [20, 17, 15]
 }
 
@@ -37,10 +37,10 @@ const startButton = document.querySelector('.start-button'),
   deadlineValue = document.querySelector('.deadline-value');
 
 
-function declOfNum(n, titles) {
-  return n + ' ' + titles[n % 10 === 1 && n % 100 !== 11 ?
-    0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
-}
+  function declOfNum(n, titles, from) {
+		return n + ' ' + titles[from ? n % 10 === 1 && n % 100 !== 11 ? 1 : 2 : n % 10 === 1 && n % 100 !== 11 ?
+			0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
+	}
 
 function showElem(elem) {
   elem.style.display = 'block';
@@ -66,7 +66,7 @@ function renderTextContent(total, site, maxDay, minDay) {
 
   totalPriceSum.textContent = total;
   typeSite.textContent = site;
-  maxDeadLine.textContent = declOfNum(maxDay, DAY_STRING);
+  maxDeadLine.textContent = declOfNum(maxDay, DAY_STRING, true);
   rangeDeadline.min = minDay;
   rangeDeadline.max = maxDay;
   deadlineValue.textContent = declOfNum(rangeDeadline.value, DAY_STRING);
