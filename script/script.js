@@ -10,7 +10,7 @@ const DATA = {
   metrikaYandex: [500, 1000, 2000],
   analyticsGoogle: [850, 1350, 3000],
   sendOrder: 500,
-  deadlineDay: [[2, 7], [3, 10], [7, 21]],
+  deadlineDay: [[2, 7], [3, 10], [7, 14]],
   deadlinePercent: [20, 17, 15]
 }
 
