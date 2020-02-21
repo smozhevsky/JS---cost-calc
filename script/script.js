@@ -1,3 +1,5 @@
+'use strict';
+
 const DAY_STRING = ['день', 'дня', 'дней'];
 
 const DATA = {
@@ -44,58 +46,50 @@ const startButton = document.querySelector('.start-button'),
   firstFieldset = document.querySelector('.first-fieldset');
 
 
-  function declOfNum(n, titles, from) {
-		return n + ' ' + titles[from ? n % 10 === 1 && n % 100 !== 11 ? 1 : 2 : n % 10 === 1 && n % 100 !== 11 ?
-			0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
-	}
+const declOfNum = (n, titles, from) => n + ' ' + titles[from ? n % 10 === 1 && n % 100 !== 11 ? 1 : 2 : n % 10 === 1 && n % 100 !== 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
 
-function showElem(elem) {
-  elem.style.display = 'block';
-}
+const showElem = elem => elem.style.display = 'block';
 
-function hideElem(elem) {
-  elem.style.display = 'none';
-}
+const hideElem = elem => elem.style.display = 'none';
 
-function dopOptionsString() {
+const dopOptionsString = (yandex, google, order) => {
 // Подключим Яндекс Метрику, Гугл Аналитику и отправку заявок на почту.
   let str = '';
 
-  if (metrikaYandex.checked || analyticsGoogle.checked || sendOrder.checked) {
+  if (yandex || google || order) {
     str += 'Подключим';
 
-    if (metrikaYandex.checked) {
+    if (yandex) {
       str += ' Яндекс Метрику';
 
-      if (analyticsGoogle.checked && sendOrder.checked) {
+      if (google && order) {
         str += ' Гугл Аналитику и отправку заявок на почту.';
         return str;
       }
 
-      if (analyticsGoogle.checked || sendOrder.checked) {
+      if (google || order) {
         str += ' и';
       }
     }
 
-    if (analyticsGoogle.checked) {
+    if (google) {
       str += ' Гугл Аналитику';
 
-      if (sendOrder.checked) {
+      if (order) {
         str += ' и';
       }
     }
 
-    if (sendOrder.checked) {
+    if (order) {
       str += ' отправку заявок на почту';
     }
     str += '.';
   }
 
-
   return str;
-}
+};
 
-function renderTextContent(total, site, maxDay, minDay) {
+const renderTextContent = (total, site, maxDay, minDay) => {
   
   if (adapt.checked) {
     mobileTemplates.disabled = false;
@@ -120,17 +114,24 @@ function renderTextContent(total, site, maxDay, minDay) {
   Сделаем ${site} ${adapt.checked ?
     ', адаптированный под мобильные устройства и планшеты' : ''}.
     ${editable.checked ? 'Установим панель админстратора, чтобы вы могли самостоятельно менять содержание на сайте без разработчика.' : ''}
-    ${dopOptionsString()}
+    ${dopOptionsString(metrikaYandex.checked, analyticsGoogle.checked, sendOrder.checked)}
   `;
-}
+};
 
-function priceCalculation(elem = {}) {
+const priceCalculation = (elem = {}) => {
+  const {
+    whichSite,
+    price,
+    deadlineDay,
+    deadlinePercent
+  } = DATA;
+
   let result = 0,
     index = 0,
     options = [],
     site = '',
-    maxDeadLineDay = DATA.deadlineDay[index][1],
-    minDeadLineDay = DATA.deadlineDay[index][0],
+    maxDeadLineDay = deadlineDay[index][1],
+    minDeadLineDay = deadlineDay[index][0],
     overPercent = 0;
 
   if (elem.name === 'whichSite') {
@@ -144,47 +145,42 @@ function priceCalculation(elem = {}) {
 
   for (const item of formCalculate.elements) {
     if (item.name === 'whichSite' && item.checked) {
-      index = DATA.whichSite.indexOf(item.value);
+      index = whichSite.indexOf(item.value);
       site = item.dataset.site;
-      maxDeadLineDay = DATA.deadlineDay[index][1];
-      minDeadLineDay = DATA.deadlineDay[index][0];
+      maxDeadLineDay = deadlineDay[index][1];
+      minDeadLineDay = deadlineDay[index][0];
     } else if (item.classList.contains('calc-handler') && item.checked) {
       options.push(item.value);
     } else if (item.classList.contains('want-faster') && item.checked) {
       const overDay =  maxDeadLineDay - rangeDeadline.value;
-      overPercent = overDay * (DATA.deadlinePercent[index] / 100);
+      overPercent = overDay * (deadlinePercent[index] / 100);
     }
   }
 
-  result += DATA.price[index];
+  result += price[index];
 
   options.forEach(function(key) {
     if (typeof(DATA[key]) === 'number') {
       if (key === 'sendOrder') {
         result += DATA[key]
       } else {
-        result += DATA.price[index] * DATA[key] / 100
+        result += price[index] * DATA[key] / 100
       }
     } else {
       if (key === 'desktopTemplates') {
-        result += DATA.price[index] * DATA[key][index] / 100
+        result += price[index] * DATA[key][index] / 100
       } else {
         result += DATA[key][index];
       }
     }
   })
 
-  
-
-
-
   result += result * overPercent;
 
   renderTextContent(result, site, maxDeadLineDay, minDeadLineDay);
+};
 
-}
-
-function handlerCallBackForm(event) {
+const handlerCallBackForm = event => {
   const target = event.target;
   
   if (target.classList.contains('want-faster')) {
@@ -195,34 +191,33 @@ function handlerCallBackForm(event) {
   if (target.classList.contains('calc-handler')) {
     priceCalculation(target);
   }
-
 };
 
-function moveBackTotal () {
+const moveBackTotal = () => {
   if (document.documentElement.getBoundingClientRect().bottom > document.documentElement.clientHeight + 200) {
     totalPrice.classList.remove('totalPriceBottom');
     firstFieldset.after(totalPrice);
     window.removeEventListener('scroll', moveBackTotal);
     window.addEventListener('scroll', moveTotal);
   }
-}
+};
 
-function moveTotal() {
+const moveTotal = () => {
    if (document.documentElement.getBoundingClientRect().bottom < document.documentElement.clientHeight + 200) {
      totalPrice.classList.add('totalPriceBottom');
      endButton.before(totalPrice);
      window.removeEventListener('scroll', moveTotal);
      window.addEventListener('scroll', moveBackTotal);
    }
-} 
+};
 
-startButton.addEventListener('click', function() {
+startButton.addEventListener('click', () => {
   showElem(mainForm);
   hideElem(firstScreen);
   window.addEventListener('scroll', moveTotal);
 });
 
-endButton.addEventListener('click', function() {
+endButton.addEventListener('click', () => {
   
   for (const elem of formCalculate.elements) {
     if (elem.tagName === 'FIELDSET') {
